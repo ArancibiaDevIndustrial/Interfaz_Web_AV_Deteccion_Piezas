@@ -1,0 +1,154 @@
+# **Documentación del Proyecto: Interfaz Web con Visión Artificial para Detectar y Contar Piezas**
+
+## **1. Introducción**
+El presente documento describe el desarrollo de un sistema de visión artificial basado en **Python, OpenCV y Flask**, que permite detectar y contar piezas de color rojo en una cinta transportadora. La interfaz web proporciona una vista en vivo de la cámara y un panel de control donde se muestra la cantidad de piezas detectadas y un gráfico de producción en tiempo real.
+
+El objetivo del sistema es mejorar la eficiencia del conteo automatizado de piezas, permitiendo la monitorización remota y el análisis de datos para optimizar procesos industriales.
+
+---
+
+## **2. Tecnologías Utilizadas**
+- **Python**: Lenguaje de programación principal.
+- **OpenCV**: Librería para el procesamiento de imágenes y detección de colores.
+- **Flask**: Framework web para servir la interfaz.
+- **HTML, CSS, JavaScript**: Tecnologías para la interfaz web.
+- **Chart.js**: Librería para la visualización de datos en gráficos.
+- **Tailwind CSS**: Framework CSS para mejorar la estética del dashboard.
+
+---
+
+## **3. Estructura del Proyecto**
+El proyecto se organiza en la siguiente estructura de archivos:
+
+```
+/mi_dashboard
+    /static
+        /css
+            style.css          # Archivo de estilos CSS
+    /templates
+        index.html             # Interfaz web
+    app.py                     # Código principal de la aplicación
+```
+
+- **`app.py`**: Procesa el video en tiempo real, detecta las piezas y actualiza los datos en la interfaz.
+- **`index.html`**: Contiene la estructura del dashboard donde se muestran la cámara y los gráficos.
+- **`style.css`**: Define los estilos visuales de la interfaz.
+
+---
+
+## **4. Funcionamiento del Sistema**
+### **4.1 Diagrama de Flujo del Sistema**
+El siguiente diagrama representa el flujo del sistema desde la captura de video hasta la visualización en la interfaz:
+
+```plaintext
+Inicio
+   ↓
+Capturar imagen desde la cámara
+   ↓
+Convertir imagen a espacio de color HSV
+   ↓
+Aplicar filtros para detectar el color rojo
+   ↓
+Encontrar contornos de las piezas detectadas
+   ↓
+Verificar si la pieza está dentro de la zona de detección
+   ↓
+Si es nueva, contar la pieza y actualizar el contador
+   ↓
+Dibujar área de detección y contador en la imagen
+   ↓
+Transmitir imagen procesada a la interfaz web
+   ↓
+Actualizar gráfico de producción cada 10 segundos
+   ↓
+Repetir el proceso
+```
+
+### **4.2 Explicación Técnica**
+1. **Captura de Video**  
+   Se utiliza OpenCV para capturar la señal en vivo desde la cámara conectada.
+
+2. **Conversión a HSV y Detección de Color**  
+   La imagen se transforma al espacio de color HSV, aplicando máscaras para filtrar tonos de rojo.
+
+3. **Identificación de Contornos**  
+   Se localizan los contornos en la máscara para detectar objetos con el color deseado.
+
+4. **Verificación de Zona de Detección**  
+   Se define un área específica en la imagen donde se cuentan las piezas que atraviesan esa región.
+
+5. **Evitar Conteo Duplicado**  
+   Se implementa una lógica de tiempo para evitar contar la misma pieza múltiples veces.
+
+6. **Transmisión a la Interfaz Web**  
+   Flask genera un stream de video y actualiza el contador en la interfaz cada 10 segundos.
+
+---
+
+## **5. Instalación y Configuración**
+### **5.1 Requisitos**
+- Python 3.x
+- OpenCV (`cv2`)
+- Flask
+- NumPy
+- Chart.js (para gráficos)
+
+### **5.2 Instalación de Dependencias**
+Ejecutar los siguientes comandos en la terminal:
+
+```sh
+pip install flask opencv-python numpy
+```
+
+### **5.3 Ejecución del Proyecto**
+Para iniciar la aplicación, ejecutar:
+
+```sh
+python app.py
+```
+
+Acceder a la interfaz en el navegador en la dirección:
+
+```
+http://127.0.0.1:5000/
+```
+
+---
+
+## **6. Esquema del Sistema**
+El siguiente diagrama muestra la interacción entre los componentes del sistema:
+
+```
+┌──────────────┐       ┌──────────────────┐        ┌──────────────────┐
+│  Cámara Web  │  →   │ Procesamiento en │  →     │     Interfaz     │
+│  (Captura)   │      │    OpenCV        │        │      Flask       │
+└──────────────┘       └──────────────────┘        └──────────────────┘
+                         ↓
+                ┌──────────────────────┐
+                │   Detección de Piezas │
+                │  (Colores y Contornos)│
+                └──────────────────────┘
+                         ↓
+                ┌──────────────────┐
+                │   Contador       │
+                │ (Zona de Detección)│
+                └──────────────────┘
+                         ↓
+                ┌──────────────────┐
+                │ Actualización de │
+                │ Datos en Gráficos│
+                └──────────────────┘
+```
+
+---
+
+## **7. Posibles Mejoras**
+- Implementación de un **sistema de almacenamiento** para registrar las piezas detectadas en una base de datos.
+- Integración con **IoT** para envío de notificaciones en tiempo real.
+- Uso de **modelos de Machine Learning** para mejorar la detección y clasificación de objetos.
+
+---
+
+## **8. Conclusión**
+Este proyecto demuestra cómo la visión artificial y el desarrollo web pueden integrarse para crear un sistema de monitoreo eficiente en tiempo real. La combinación de **OpenCV y Flask** permite una solución ligera y funcional, con la posibilidad de expandirlo según los requerimientos industriales.
+
