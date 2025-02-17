@@ -98,9 +98,8 @@ Este proyecto se distribuye bajo la licencia MIT. Consulta el archivo `LICENSE` 
 
 ## **📞 Contacto**
 Si tienes dudas o sugerencias, contáctame en:  
-📧 **tu-email@example.com**  
-🐦 **[@tu-usuario](https://twitter.com/tu-usuario)**  
+📧 **arancibia.dev@outlook.com  
+🐦 **@arancibia_dev
 
 ---
 
-Este archivo README.md es ideal para hacer que tu repositorio en GitHub luzca profesional y bien documentado. ¡Solo necesitas reemplazar "tu-usuario" y "tu-repositorio" con los datos de tu cuenta y listo! 🚀
