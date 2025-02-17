@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Detección</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #111827, #1f2937);
+            color: white;
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            background: linear-gradient(to bottom, #1e293b, #334155);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body class="flex h-screen">
+    
+    <!-- Menú lateral -->
+    <aside class="w-16 md:w-64 bg-gray-900 p-5 flex flex-col space-y-6 text-center">
+        <h2 class="text-xl font-bold hidden md:block">Dashboard</h2>
+        <nav class="space-y-4">
+            <button class="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md">Inicio</button>
+            <button class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">Cámara</button>
+            <button class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">Datos</button>
+        </nav>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 p-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Sección de Cámara -->
+            <div class="card col-span-2">
+                <h2 class="text-lg font-bold">Cámara en Vivo</h2>
+                <img id="video-stream" src="{{ url_for('video_feed') }}" class="w-full h-72 object-cover rounded-md" alt="Cámara en Vivo">
+            </div>
+
+            <!-- Sección de Contador -->
+            <div class="card">
+                <h2 class="text-lg font-bold">Piezas Detectadas</h2>
+                <p class="text-4xl font-bold text-blue-400" id="contador">{{ (contador / 2) | round(0) }}</p>
+            </div>
+
+            <!-- Sección de Datos y Gráficos -->
+            <div class="card col-span-3">
+                <h2 class="text-lg font-bold">Gráficos de Detección</h2>
+                <canvas id="chart"></canvas>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Scripts para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Función para convertir la hora en formato HH:mm:ss
+        function obtenerHoraActual() {
+            const ahora = new Date();
+            let horas = ahora.getHours().toString().padStart(2, '0');
+            let minutos = ahora.getMinutes().toString().padStart(2, '0');
+            let segundos = ahora.getSeconds().toString().padStart(2, '0');
+            return `${horas}:${minutos}:${segundos}`;
+        }
+
+        let ctx = document.getElementById('chart').getContext('2d');
+
+        // Variables iniciales
+        let producciones = [];
+        let piezasDetectadas = [];
+        let horas = [];
+
+        // Crear el gráfico con Chart.js
+        let myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: horas,
+                datasets: [{
+                    label: 'Piezas Detectadas por Producción (Cada 10 seg)',
+                    data: piezasDetectadas,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderWidth: 2,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#3b82f6'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Hora (Cada 10 seg)',
+                            color: '#ffffff'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Cantidad de Piezas',
+                            color: '#ffffff'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Función para agregar una nueva producción con retraso
+        function agregarProduccion(piezas) {
+            let hora = obtenerHoraActual();  // Obtener la hora actual
+            producciones.push(`Producción ${producciones.length + 1}`);
+            piezasDetectadas.push(piezas);
+            horas.push(hora);  // Añadir la hora actual al eje X
+
+            // Limitar a las últimas 10 producciones para mantener el gráfico limpio
+            if (producciones.length > 10) {
+                producciones.shift();
+                piezasDetectadas.shift();
+                horas.shift();
+            }
+
+            // Actualizar el gráfico
+            myChart.update();
+        }
+
+        // Función para actualizar el gráfico con el valor del contador
+        function actualizarGrafico(contador) {
+            // Agregar una nueva producción con el valor del contador
+            agregarProduccion(contador);
+
+            // Asegurarse de actualizar el gráfico con los nuevos datos
+            myChart.update();
+        }
+
+        // Función para actualizar el contador cada 10 segundos
+        function actualizarContador() {
+            fetch('/')
+                .then(response => response.text())
+                .then(html => {
+                    let doc = new DOMParser().parseFromString(html, 'text/html');
+                    let nuevoContador = doc.querySelector('#contador').innerText;
+                    document.querySelector('#contador').innerText = nuevoContador;
+
+                    // Actualizar el gráfico con el nuevo valor de contador
+                    let contador = parseInt(nuevoContador);
+                    actualizarGrafico(contador);
+                });
+        }
+
+        // Actualizar el gráfico y el contador cada 10 segundos
+        setInterval(actualizarContador, 10000);  // Actualizar cada 10 segundos
+    </script>
+</body>
+</html>
