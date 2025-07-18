@@ -59,9 +59,11 @@ http://127.0.0.1:5000/
 ---
 
 ## **Demostración Visual**  
-*(Incluir capturas de pantalla o GIFs que muestren:)*  
-- **Vista de la cámara procesada**: Con superposición de áreas de detección y conteo.  
+- **Vista de la cámara procesada**: Con superposición de áreas de detección y conteo.
+<img width="1365" height="678" alt="Screenshot 2025-02-16 065535" src="https://github.com/user-attachments/assets/9e5b970a-e964-4efc-b27b-a809eaf021b6" />
+
 - **Dashboard operativo**: Gráficos de producción, historial de conteo y estadísticas.  
+<img width="677" height="599" alt="Screenshot 2025-02-16 065552" src="https://github.com/user-attachments/assets/5c075716-f48a-4482-9620-7a438e02fc08" />
 
 ---
 
